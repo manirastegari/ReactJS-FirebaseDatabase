@@ -1,57 +1,92 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import AuthScreen from './screens/AuthScreen';
+import HomeScreen from './screens/HomeScreen';
+import CryptoDetailsScreen from './screens/CryptoDetailsScreen';
+import FavoritesScreen from './screens/FavoritesScreen';
+import SignInScreen from './screens/SignInScreen';
+import SignUpScreen from './screens/SignUpScreen';
 
-import HomeStack from './screens/HomeStack';
-import AddNewBook from './screens/AddNewBook';
+const Stack = createStackNavigator();
 
-/*
+const HeaderButton = ({ title, onPress }) => (
+  <TouchableOpacity style={styles.buttonStyle} onPress={onPress}>
+    <Text style={styles.buttonText}>{title}</Text>
+  </TouchableOpacity>
+);
 
-Navigation Container
-npm install @react-navigation/native
-
-npm install @react-navigation/native-stack
-npm install react-native-screens react-native-safe-area-context
-
-npm install @react-navigation/bottom-tabs
-
-npm install --save react-native-vector-icons
-
-npm install firebase
-*/
-
-const Tab = createBottomTabNavigator();
+const headerOptions = ({ navigation }) => ({
+  headerRight: () => (
+    <HeaderButton
+      title="Logout"
+      onPress={() => {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: 'Auth' }],
+          })
+        );
+      }}
+    />
+  ),
+});
 
 const App = () => {
   return (
     <NavigationContainer>
-      <Tab.Navigator
-        initialRouteName='HomeStack'
-        screenOptions={{
-          tabBarActiveTintColor: 'navy',
-          headerShown: false
-        }} >
-        <Tab.Screen
-          name='HomeStack'
-          component={HomeStack}
-          options={{
-            tabBarLabel: '',
-            tabBarIcon: ({ color }) => (
-              <Icon name='home' size={32} color={color} />
-            )
-          }} />
-        <Tab.Screen
-          name='AddNewBook'
-          component={AddNewBook}
-          options={{
-            tabBarLabel: '',
-            tabBarIcon: ({ color }) => (
-              <Icon name='plus-circle' size={32} color={color} />
-            )
-          }} />
-      </Tab.Navigator>
+      <Stack.Navigator initialRouteName="Auth">
+        <Stack.Screen
+          name="Auth"
+          component={AuthScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="SignIn"
+          component={SignInScreen}
+          options={{ headerTitle: 'Login' }}
+        />
+        <Stack.Screen
+          name="SignUp"
+          component={SignUpScreen}
+          options={{ headerTitle: 'Register' }}
+        />
+        <Stack.Screen
+          name="Home"
+          component={HomeScreen}
+          options={headerOptions}
+        />
+        <Stack.Screen
+          name="CryptoDetails"
+          component={CryptoDetailsScreen}
+          options={headerOptions}
+        />
+        <Stack.Screen
+          name="Favorites"
+          component={FavoritesScreen}
+          options={headerOptions}
+        />
+      </Stack.Navigator>
     </NavigationContainer>
   );
-}
+};
+
+const styles = StyleSheet.create({
+  buttonStyle: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'crimson',
+    borderRadius: 10,
+    height: 40,
+    paddingHorizontal: 15,
+    marginRight: 10,
+  },
+  buttonText: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: 'white',
+  },
+});
 
 export default App;
